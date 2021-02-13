@@ -8,10 +8,8 @@ import { logout } from '../actions/userActions'
 
 const Header = () => {
   const dispatch = useDispatch()
-
   const userLogin = useSelector((state) => state.userLogin)
   const { userInfo } = userLogin
-
   const logoutHandler = () => {
     dispatch(logout())
   }
@@ -21,11 +19,11 @@ const Header = () => {
       <Navbar bg='dark' variant='dark' expand='lg' collapseOnSelect>
         <Container>
           <LinkContainer to='/'>
-            <Navbar.Brand>ProShop</Navbar.Brand>
+            <Navbar.Brand>ANJISH-STORE</Navbar.Brand>
           </LinkContainer>
           <Navbar.Toggle aria-controls='basic-navbar-nav' />
           <Navbar.Collapse id='basic-navbar-nav'>
-            <Route render={({ history }) => <SearchBox history={history} />} />
+            <SearchBox/>
             <Nav className='ml-auto'>
               <LinkContainer to='/cart'>
                 <Nav.Link>

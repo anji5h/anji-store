@@ -9,7 +9,7 @@ import {
   listProductDetails,
   createProductReview,
 } from '../actions/productActions'
-import { PRODUCT_CREATE_REVIEW_RESET } from '../actionTypes/productConstants'
+import { PRODUCT_CREATE_REVIEW_RESET } from '../constants/productConstants'
 
 const ProductScreen = ({ history, match }) => {
   const [qty, setQty] = useState(1)
@@ -21,8 +21,8 @@ const ProductScreen = ({ history, match }) => {
   const productDetails = useSelector((state) => state.productDetails)
   const { loading, error, product } = productDetails
 
-  const userLogin = useSelector((state) => state.userLogin)
-  const { userInfo } = userLogin
+  // const userLogin = useSelector((state) => state.userLogin)
+  // const { userInfo } = userLogin
 
   const productReviewCreate = useSelector((state) => state.productReviewCreate)
   const {

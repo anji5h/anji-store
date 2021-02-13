@@ -4,22 +4,36 @@ import { Form, Button, Row, Col } from "react-bootstrap";
 import Message from "../components/Message";
 import FormContainer from "../components/FormContainer";
 import { useForm } from "react-hook-form";
-
+import httpReq from "../utils/httpReq";
+import { useDispatch } from "react-redux";
+import { USER_DETAILS_SUCCESS } from "../constants/userConstants";
 const errorLabelStyle = {
   fontSize: "13px",
   color: "red",
 };
-const LoginScreen = () => {
-  const { register, errors, handleSubmit } = useForm();
+export default function LoginScreen() {
+  const dispatch = useDispatch();
+  const [error, setError] = React.useState(null);
+  const {
+    register,
+    errors,
+    handleSubmit,
+    formState: { isSubmitting },
+  } = useForm();
 
-  const onSubmit = (data) => {
-    e.preventDefault();
+  const onSubmit = async (data) => {
+    try {
+      let response = await httpReq.post("/auth/login", data, true);
+      dispatch({ type: USER_DETAILS_SUCCESS, payload: response.data.user });
+    } catch (err) {
+      setError(err.response?.data?.message || "login failed.");
+    }
   };
 
   return (
     <FormContainer>
       <h1>Sign In</h1>
-      {/* {error && <Message variant="danger">{error}</Message>} */}
+      {error && <Message variant="danger">{error}</Message>}
       <Form onSubmit={handleSubmit(onSubmit)}>
         <Form.Group controlId="email">
           <Form.Label>Email Address or Username</Form.Label>
@@ -48,7 +62,12 @@ const LoginScreen = () => {
           </Form.Control.Feedback>
         </Form.Group>
 
-        <Button type="submit" variant="primary" style={{ fontSize: "13px" }}>
+        <Button
+          type="submit"
+          disabled={isSubmitting}
+          variant="primary"
+          style={{ fontSize: "13px" }}
+        >
           Sign In
         </Button>
       </Form>
@@ -60,6 +79,4 @@ const LoginScreen = () => {
       </Row>
     </FormContainer>
   );
-};
-
-export default LoginScreen;
+}

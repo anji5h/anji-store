@@ -20,7 +20,7 @@ import {
   USER_UPDATE_PROFILE_RESET,
 } from "../constants/userConstants";
 
-export const userDetailsReducer = (state = { user: null }, action) => {
+export const userDetailsReducer = (state = { loading: true, user: null }, action) => {
   switch (action.type) {
     case USER_DETAILS_SUCCESS:
       return { loading: false, user: action.payload };

@@ -9,7 +9,7 @@ import httpReq from "./utils/httpReq";
 
 function AuthProvider({ children }) {
   const dispatch = useDispatch();
-  const { loading, user, error } = useSelector((state) => state.userDetails);
+  const { loading } = useSelector((state) => state.userDetails);
   const setAuthStatus = async () => {
     try {
       let response = await httpReq.get("/user/getuserdetail", true);

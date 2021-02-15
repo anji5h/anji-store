@@ -26,8 +26,10 @@ import {
   orderListMyReducer,
   orderListReducer,
 } from "./reducers/orderReducers";
+import toastReducer from "./reducers/toastReducer";
 
 const reducer = combineReducers({
+  toast: toastReducer,
   productList: productListReducer,
   productDetails: productDetailsReducer,
   productDelete: productDeleteReducer,

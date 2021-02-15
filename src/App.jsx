@@ -1,64 +1,45 @@
 import React from "react";
-import { BrowserRouter as Router, Redirect, Route } from "react-router-dom";
-import { Container } from "react-bootstrap";
-import Header from "./components/Header";
-import HomeScreen from "./screens/HomeScreen";
-// import ProductScreen from "./screens/ProductScreen";
-// import CartScreen from "./screens/CartScreen";
-import LoginScreen from "./screens/LoginScreen";
-import RegisterScreen from "./screens/RegisterScreen";
-import { useSelector } from "react-redux";
-// import ProfileScreen from "./screens/ProfileScreen";
-// import ShippingScreen from "./screens/ShippingScreen";
-// import PaymentScreen from "./screens/PaymentScreen";
-// import PlaceOrderScreen from "./screens/PlaceOrderScreen";
-// import OrderScreen from "./screens/OrderScreen";
-// import UserListScreen from "./screens/UserListScreen";
-// import UserEditScreen from "./screens/UserEditScreen";
-// import ProductListScreen from "./screens/ProductListScreen";
-// import ProductEditScreen from "./screens/ProductEditScreen";
-// import OrderListScreen from "./screens/OrderListScreen";
+import { useDispatch, useSelector } from "react-redux";
+import AppRoute from "./AppRoute";
+import Loader from "./components/Loader";
+import ToastMessage from "./components/ToastMessage";
+import { SHOW_TOAST } from "./constants/toastConstant";
+import { USER_DETAILS_SUCCESS } from "./constants/userConstants";
+import httpReq from "./utils/httpReq";
 
-const PublicRoute = ({ component: Component, user, ...rest }) => (
-  <Route {...rest} render={(props) => (user ? <Redirect to="/" /> : <Component {...props} />)} />
-);
-
-const PrivateRoute = ({ component: Component, user, ...rest }) => (
-  <Route
-    {...rest}
-    render={(props) => (user ? <Component {...props} /> : <Redirect to="/login" />)}
-  />
-);
-const App = () => {
-  const { user } = useSelector((state) => state.userDetails);
+function AuthProvider({ children }) {
+  const dispatch = useDispatch();
+  const { loading, user, error } = useSelector((state) => state.userDetails);
+  const setAuthStatus = async () => {
+    try {
+      let response = await httpReq.get("/user/getuserdetail", true);
+      dispatch({ type: USER_DETAILS_SUCCESS, payload: response.data.user });
+    } catch (err) {
+      dispatch({ type: SHOW_TOAST, payload: "Error loading user data. Try again." });
+    }
+  };
+  React.useEffect(() => {
+    setAuthStatus();
+  }, []);
   return (
-    <Router>
-      <Header />
-      <main className="py-3">
-        <Container>
-          <Route path="/" component={HomeScreen} exact />
-          <PublicRoute path="/login" component={LoginScreen} user={user} />
-          <PublicRoute path="/register" component={RegisterScreen} user={user} />
-          <Route path="/search/:keyword" component={HomeScreen} exact />
-          <Route path="/page/:pageNumber" component={HomeScreen} exact />
-          <Route path="/search/:keyword/page/:pageNumber" component={HomeScreen} exact />
-          {/* <Route path="/order/:id" component={OrderScreen} />
-          <Route path="/shipping" component={ShippingScreen} />
-          <Route path="/payment" component={PaymentScreen} />
-          <Route path="/placeorder" component={PlaceOrderScreen} />
-          <Route path="/profile" component={ProfileScreen} />
-          <Route path="/product/:id" component={ProductScreen} />
-          <Route path="/cart/:id?" component={CartScreen} />
-          <Route path="/admin/userlist" component={UserListScreen} />
-          <Route path="/admin/user/:id/edit" component={UserEditScreen} />
-          <Route path="/admin/productlist" component={ProductListScreen} exact />
-          <Route path="/admin/productlist/:pageNumber" component={ProductListScreen} exact />
-          <Route path="/admin/product/:id/edit" component={ProductEditScreen} />
-          <Route path="/admin/orderlist" component={OrderListScreen} /> */}
-        </Container>
-      </main>
-    </Router>
+    <>
+      {loading ? (
+        <div className="loader">
+          <Loader />
+          <span>Loading . . .</span>
+        </div>
+      ) : (
+        <>{children}</>
+      )}
+    </>
   );
-};
+}
 
-export default App;
+export default function App() {
+  return (
+    <AuthProvider>
+      <ToastMessage />
+      <AppRoute />
+    </AuthProvider>
+  );
+}

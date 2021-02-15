@@ -3,8 +3,16 @@ import { Link } from "react-router-dom";
 import { Form, Button, Row, Col } from "react-bootstrap";
 import Message from "../components/Message";
 import FormContainer from "../components/FormContainer";
+import { useForm } from "react-hook-form";
 
 const RegisterScreen = () => {
+  const [error, setError] = React.useState(null);
+  const {
+    register,
+    errors,
+    handleSubmit,
+    formState: { isSubmitting },
+  } = useForm();
   const submitHandler = (e) => {
     e.preventDefault();
   };
@@ -13,32 +21,40 @@ const RegisterScreen = () => {
     <FormContainer>
       <h1>Sign Up</h1>
       {error && <Message variant="danger">{error}</Message>}
-      <Form onSubmit={submitHandler}>
+      <Form onSubmit={handleSubmit(submitHandler)}>
         <Form.Group controlId="name">
-          <Form.Label>Name</Form.Label>
-          <Form.Control type="name" placeholder="Enter name"></Form.Control>
+          <Form.Label>Full Name</Form.Label>
+          <Form.Control
+            name="name"
+            placeholder="Enter name"
+            ref={register({ required: true })}
+          ></Form.Control>
+          
         </Form.Group>
-
+        <Form.Group controlId="username">
+          <Form.Label>Username</Form.Label>
+          <Form.Control name="username" placeholder="Enter username" ref={register}></Form.Control>
+        </Form.Group>
         <Form.Group controlId="email">
           <Form.Label>Email Address</Form.Label>
-          <Form.Control type="email" placeholder="Enter email"></Form.Control>
+          <Form.Control name="email" placeholder="Enter email" ref={register}></Form.Control>
         </Form.Group>
-
         <Form.Group controlId="password">
           <Form.Label>Password</Form.Label>
           <Form.Control
             type="password"
+            name="password"
             placeholder="Enter password"
-            value={password}
+            ref={register}
           ></Form.Control>
         </Form.Group>
-
         <Form.Group controlId="confirmPassword">
           <Form.Label>Confirm Password</Form.Label>
           <Form.Control
             type="password"
+            name="re-password"
+            ref={register}
             placeholder="Confirm password"
-            value={confirmPassword}
           ></Form.Control>
         </Form.Group>
 
@@ -50,7 +66,7 @@ const RegisterScreen = () => {
       <Row className="py-3">
         <Col>
           Have an Account?
-          <Link to="/login">Login</Link>
+          <Link to="/login"> Login</Link>
         </Col>
       </Row>
     </FormContainer>

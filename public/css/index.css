@@ -1,3 +1,19 @@
+html,
+body,
+#root {
+  height: 100%;
+  width: 100%;
+}
+
+.loader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+}
+
 main {
   min-height: 80vh;
 }

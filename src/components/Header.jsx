@@ -3,11 +3,20 @@ import { useDispatch, useSelector } from "react-redux";
 import { LinkContainer } from "react-router-bootstrap";
 import { Navbar, Nav, Container, NavDropdown } from "react-bootstrap";
 import SearchBox from "./SearchBox";
+import httpReq from "../utils/httpReq";
+import { USER_DETAILS_RESET } from "../constants/userConstants";
+import { SHOW_TOAST } from "../constants/toastConstant";
 
 const Header = () => {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.userDetails);
-  const logoutHandler = () => {};
+  const logoutHandler = async () => {
+    try {
+      await httpReq.get("/auth/logout", false);
+    } catch (err) {
+      dispatch({ type: SHOW_TOAST, payload: "Failed to logout. Try again." });
+    }
+  };
 
   return (
     <header>
@@ -39,7 +48,7 @@ const Header = () => {
                   </Nav.Link>
                 </LinkContainer>
               )}
-              {user && user.role === 0 && (
+              {user?.role === 0 && (
                 <NavDropdown title="Admin" id="adminmenu">
                   <LinkContainer to="/admin/userlist">
                     <NavDropdown.Item>Users</NavDropdown.Item>

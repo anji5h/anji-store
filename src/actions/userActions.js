@@ -13,10 +13,38 @@ import {
   USER_UPDATE_FAIL,
   USER_UPDATE_SUCCESS,
   USER_UPDATE_REQUEST,
+  USER_LOGOUT,
+  USER_DETAILS_REQUEST,
+  USER_DETAILS_FAIL,
 } from "../constants/userConstants";
 import httpReq from "../utils/httpReq";
 
-export const updateUserProfile = (user) => async (dispatch, getState) => {
+const logout = () => ({
+  type: USER_LOGOUT,
+});
+
+export const userDetails = () => async (dispatch) => {
+  try {
+    dispatch({
+      type: USER_DETAILS_REQUEST,
+    });
+    const { data } = await httpReq.get(`/user/getuserdetail`, true);
+
+    dispatch({
+      type: USER_DETAILS_SUCCESS,
+      payload: data.user,
+    });
+  } catch (error) {
+    if (error.response?.status === 401) {
+      dispatch(logout());
+    }
+    dispatch({
+      type: USER_DETAILS_FAIL,
+      payload: error.response?.data?.message,
+    });
+  }
+};
+export const updateUserProfile = (user) => async (dispatch) => {
   try {
     dispatch({
       type: USER_UPDATE_PROFILE_REQUEST,
@@ -27,19 +55,13 @@ export const updateUserProfile = (user) => async (dispatch, getState) => {
       type: USER_UPDATE_PROFILE_SUCCESS,
       payload: data,
     });
-    dispatch({
-      type: USER_LOGIN_SUCCESS,
-      payload: data,
-    });
   } catch (error) {
-    const message =
-      error.response && error.response.data.message ? error.response.data.message : error.message;
-    if (message === "Not authorized, token failed") {
+    if (error.response?.status === 401) {
       dispatch(logout());
     }
     dispatch({
       type: USER_UPDATE_PROFILE_FAIL,
-      payload: message,
+      payload: error.response?.data?.message,
     });
   }
 };
@@ -55,39 +77,36 @@ export const listUsers = () => async (dispatch) => {
       payload: data.user,
     });
   } catch (error) {
-    const message = error.response?.data?.message;
-    // if (message === "Not authorized, token failed") {
-    //   dispatch(logout());
-    // }
+    if (error.response?.status === 401) {
+      dispatch(logout());
+    }
     dispatch({
       type: USER_LIST_FAIL,
-      payload: message,
+      payload: error.response?.data?.message,
     });
   }
 };
 
-export const deleteUser = (id) => async (dispatch, getState) => {
+export const deleteUser = (id) => async (dispatch) => {
   try {
     dispatch({
       type: USER_DELETE_REQUEST,
     });
-    await httpReq.remove(`/api/users/${id}`,true);
+    await httpReq.remove(`/api/users/${id}`, true);
 
     dispatch({ type: USER_DELETE_SUCCESS });
   } catch (error) {
-    const message =
-      error.response && error.response.data.message ? error.response.data.message : error.message;
-    if (message === "Not authorized, token failed") {
+    if (error.response?.status === 401) {
       dispatch(logout());
     }
     dispatch({
       type: USER_DELETE_FAIL,
-      payload: message,
+      payload: error.response?.data?.message,
     });
   }
 };
 
-export const updateUser = (user) => async (dispatch, getState) => {
+export const updateUser = (user) => async (dispatch) => {
   try {
     dispatch({
       type: USER_UPDATE_REQUEST,
@@ -100,14 +119,12 @@ export const updateUser = (user) => async (dispatch, getState) => {
 
     dispatch({ type: USER_DETAILS_RESET });
   } catch (error) {
-    const message =
-      error.response && error.response.data.message ? error.response.data.message : error.message;
-    if (message === "Not authorized, token failed") {
+    if (error.response?.status === 401) {
       dispatch(logout());
     }
     dispatch({
       type: USER_UPDATE_FAIL,
-      payload: message,
+      payload: error.response?.data?.message,
     });
   }
 };

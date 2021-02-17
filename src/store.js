@@ -27,8 +27,9 @@ import {
   orderListReducer,
 } from "./reducers/orderReducers";
 import toastReducer from "./reducers/toastReducer";
+import { USER_LOGOUT } from "./constants/userConstants";
 
-const reducer = combineReducers({
+const appReducer = combineReducers({
   toast: toastReducer,
   productList: productListReducer,
   productDetails: productDetailsReducer,
@@ -50,7 +51,10 @@ const reducer = combineReducers({
   orderListMy: orderListMyReducer,
   orderList: orderListReducer,
 });
-
-const store = createStore(reducer, composeWithDevTools(applyMiddleware(thunk)));
+const rootReducer = (state, action) => {
+  if (action.type === USER_LOGOUT) state = undefined;
+  return appReducer(state, action);
+};
+const store = createStore(rootReducer, composeWithDevTools(applyMiddleware(thunk)));
 
 export default store;

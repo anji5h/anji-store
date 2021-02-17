@@ -4,15 +4,16 @@ import { LinkContainer } from "react-router-bootstrap";
 import { Navbar, Nav, Container, NavDropdown } from "react-bootstrap";
 import SearchBox from "./SearchBox";
 import httpReq from "../utils/httpReq";
-import { USER_DETAILS_RESET } from "../constants/userConstants";
 import { SHOW_TOAST } from "../constants/toastConstant";
+import { USER_LOGOUT } from "../constants/userConstants";
 
 const Header = () => {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.userDetails);
   const logoutHandler = async () => {
     try {
-      await httpReq.get("/auth/logout", false);
+      await httpReq.get("/auth/logout", true);
+      dispatch({ type: USER_LOGOUT });
     } catch (err) {
       dispatch({ type: SHOW_TOAST, payload: "Failed to logout. Try again." });
     }

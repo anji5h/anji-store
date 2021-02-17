@@ -8,18 +8,11 @@ import { listUsers, deleteUser } from "../actions/userActions";
 import { useHistory } from "react-router-dom";
 
 const UserListScreen = () => {
-  const history = useHistory();
   const dispatch = useDispatch();
-
   const { loading, error, users } = useSelector((state) => state.userList);
-
-  const { user } = useSelector((state) => state.userDetails);
-
-  const { success: successDelete } = useSelector((state) => state.userDelete);
-
   useEffect(() => {
     dispatch(listUsers());
-  }, [dispatch, successDelete]);
+  }, []);
 
   const deleteHandler = (id) => {
     if (window.confirm("Are you sure")) {
@@ -62,7 +55,7 @@ const UserListScreen = () => {
                 </td>
                 <td>
                   <LinkContainer to={`/admin/user/${user._id}/edit`}>
-                    <Button variant='dark' className="btn-sm">
+                    <Button variant="dark" className="btn-sm">
                       <i className="fas fa-edit"></i>
                     </Button>
                   </LinkContainer>

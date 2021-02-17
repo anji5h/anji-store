@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form";
 import httpReq from "../utils/httpReq";
 import { useDispatch } from "react-redux";
 import { USER_DETAILS_SUCCESS } from "../constants/userConstants";
-const errorLabelStyle = {
+export const errorLabelStyle = {
   fontSize: "13px",
   color: "red",
 };
@@ -26,7 +26,7 @@ export default function LoginScreen() {
       let response = await httpReq.post("/auth/login", data, true);
       dispatch({ type: USER_DETAILS_SUCCESS, payload: response.data.user });
     } catch (err) {
-      setError(err.response?.data?.message || "login failed.");
+      setError(err.response?.data?.message || "unknown error occurred. try again");
     }
   };
 
@@ -39,7 +39,6 @@ export default function LoginScreen() {
           <Form.Label>Email Address or Username</Form.Label>
           <Form.Control
             name="username"
-            placeholder="email, username"
             ref={register({ required: true })}
             isInvalid={errors.username}
           ></Form.Control>
@@ -53,7 +52,6 @@ export default function LoginScreen() {
           <Form.Control
             type="password"
             name="password"
-            placeholder="password"
             isInvalid={errors.password}
             ref={register({ required: true })}
           ></Form.Control>

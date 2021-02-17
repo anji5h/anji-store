@@ -8,9 +8,7 @@ import { updateUserProfile } from "../actions/userActions";
 import { listMyOrders } from "../actions/orderActions";
 import { USER_UPDATE_PROFILE_RESET } from "../constants/userConstants";
 
-const ProfileScreen = ({ location, history }) => {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
+const ProfileScreen = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [message, setMessage] = useState(null);
@@ -27,13 +25,7 @@ const ProfileScreen = ({ location, history }) => {
   const { loading: loadingOrders, error: errorOrders, orders } = orderListMy;
 
   useEffect(() => {
-    if (!user || !user.name || success) {
-      dispatch({ type: USER_UPDATE_PROFILE_RESET });
-      dispatch(listMyOrders());
-    } else {
-      setName(user.name);
-      setEmail(user.email);
-    }
+    dispatch(listMyOrders());
   }, [dispatch, user, success]);
 
   const submitHandler = (e) => {
@@ -41,7 +33,7 @@ const ProfileScreen = ({ location, history }) => {
     if (password !== confirmPassword) {
       setMessage("Passwords do not match");
     } else {
-      dispatch(updateUserProfile({ id: user._id, name, email, password }));
+      dispatch(updateUserProfile({ id: user._id, password }));
     }
   };
 
@@ -63,20 +55,19 @@ const ProfileScreen = ({ location, history }) => {
               <Form.Control
                 type="name"
                 placeholder="Enter name"
-                value={name}
+                value={user.name}
                 onChange={(e) => setName(e.target.value)}
               ></Form.Control>
             </Form.Group>
 
+            <Form.Group controlId="username">
+              <Form.Label>Username</Form.Label>
+              <Form.Control value={user.username} disabled readOnly></Form.Control>
+            </Form.Group>
+
             <Form.Group controlId="email">
               <Form.Label>Email Address</Form.Label>
-              <Form.Control
-                type="email"
-                placeholder="Enter email"
-                value={email}
-                disabled
-                readOnly
-              ></Form.Control>
+              <Form.Control type="email" value={user.email} disabled readOnly></Form.Control>
             </Form.Group>
 
             <Form.Group controlId="password">

@@ -21,7 +21,7 @@ const Header = () => {
 
   return (
     <header>
-      <Navbar bg="dark" variant="dark" expand="lg" collapseOnSelect>
+      <Navbar fixed='top' bg="dark" variant="dark" expand="lg" collapseOnSelect>
         <Container>
           <LinkContainer to="/">
             <Navbar.Brand>ANJISH-STORE</Navbar.Brand>
@@ -30,11 +30,13 @@ const Header = () => {
           <Navbar.Collapse id="basic-navbar-nav">
             <SearchBox />
             <Nav className="ml-auto">
-              <LinkContainer to="/cart">
-                <Nav.Link>
-                  <i className="fas fa-shopping-cart"></i> Cart
-                </Nav.Link>
-              </LinkContainer>
+              {user && (
+                <LinkContainer to="/cart">
+                  <Nav.Link>
+                    <i className="fas fa-shopping-cart"></i> Cart
+                  </Nav.Link>
+                </LinkContainer>
+              )}
               {user ? (
                 <NavDropdown title={user.name} id="username">
                   <LinkContainer to="/profile">
@@ -50,7 +52,7 @@ const Header = () => {
                 </LinkContainer>
               )}
               {user?.role === 0 && (
-                <NavDropdown title="Admin" id="adminmenu">
+                <NavDropdown title="Admin Portal" id="adminmenu">
                   <LinkContainer to="/admin/userlist">
                     <NavDropdown.Item>Users</NavDropdown.Item>
                   </LinkContainer>

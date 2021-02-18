@@ -18,8 +18,7 @@ const RegisterScreen = () => {
     watch,
     formState: { isSubmitting },
   } = useForm();
-  const password = React.useRef("");
-  password.current = watch("password", "");
+
   const submitHandler = async (data) => {
     try {
       await httpReq.post("/auth/signup", data);
@@ -94,7 +93,7 @@ const RegisterScreen = () => {
             type="password"
             name="repassword"
             ref={register({
-              validate: (value) => password.current === value || "password don't match",
+              validate: (value) => watch('password') === value || "password don't match",
             })}
             isInvalid={errors.repassword}
             placeholder="Confirm password"

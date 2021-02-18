@@ -4,7 +4,7 @@ import { Container } from "react-bootstrap";
 import { useSelector } from "react-redux";
 import Header from "./components/Header";
 import HomeScreen from "./screens/HomeScreen";
-// import ProductScreen from "./screens/ProductScreen";
+import ProductScreen from "./screens/ProductScreen";
 // import CartScreen from "./screens/CartScreen";
 import LoginScreen from "./screens/LoginScreen";
 import RegisterScreen from "./screens/RegisterScreen";
@@ -14,9 +14,9 @@ import UserListScreen from "./screens/UserListScreen";
 // import PaymentScreen from "./screens/PaymentScreen";
 // import PlaceOrderScreen from "./screens/PlaceOrderScreen";
 // import OrderScreen from "./screens/OrderScreen";
-// import UserEditScreen from "./screens/UserEditScreen";
-// import ProductListScreen from "./screens/ProductListScreen";
-// import ProductEditScreen from "./screens/ProductEditScreen";
+import ProductListScreen from "./screens/ProductListScreen";
+import ProductEditScreen from "./screens/ProductEditScreen";
+import CreateProductScreen from "./screens/CreateProductScreen";
 // import OrderListScreen from "./screens/OrderListScreen";
 
 const PublicRoute = ({ component: Component, user, ...rest }) => (
@@ -44,26 +44,36 @@ export default function AppRoute() {
   return (
     <Router>
       <Header />
-      <main className="py-3">
+      <main style={{ paddingTop: "100px" }}>
         <Container>
           <Route path="/" component={HomeScreen} exact />
-          <PublicRoute path="/login" component={LoginScreen} user={user} />
-          <PublicRoute path="/register" component={RegisterScreen} user={user} />
           <Route path="/search/:keyword" component={HomeScreen} exact />
           <Route path="/page/:pageNumber" component={HomeScreen} exact />
           <Route path="/search/:keyword/page/:pageNumber" component={HomeScreen} exact />
+          <PublicRoute path="/login" component={LoginScreen} user={user} />
+          <PublicRoute path="/register" component={RegisterScreen} user={user} />
           <PrivateRoute path="/profile" component={ProfileScreen} user={user} />
           <AdminRoute path="/admin/userlist" component={UserListScreen} user={user} />
+          <AdminRoute path="/admin/productlist" component={ProductListScreen} exact user={user} />
+          <AdminRoute
+            path="/admin/createproduct"
+            component={CreateProductScreen}
+            exact
+            user={user}
+          />
+          <AdminRoute
+            path="/admin/productlist/:pageNumber"
+            component={ProductListScreen}
+            exact
+            user={user}
+          />
+          <AdminRoute path="/admin/product/:id/edit" component={ProductEditScreen} user={user} />
+          <AdminRoute path="/product/:id" component={ProductScreen} />
           {/* <Route path="/order/:id" component={OrderScreen} />
           <Route path="/shipping" component={ShippingScreen} />
           <Route path="/payment" component={PaymentScreen} />
           <Route path="/placeorder" component={PlaceOrderScreen} />
-          <Route path="/product/:id" component={ProductScreen} />
           <Route path="/cart/:id?" component={CartScreen} />
-          <Route path="/admin/user/:id/edit" component={UserEditScreen} />
-          <Route path="/admin/productlist" component={ProductListScreen} exact />
-          <Route path="/admin/productlist/:pageNumber" component={ProductListScreen} exact />
-          <Route path="/admin/product/:id/edit" component={ProductEditScreen} />
           <Route path="/admin/orderlist" component={OrderListScreen} /> */}
         </Container>
       </main>

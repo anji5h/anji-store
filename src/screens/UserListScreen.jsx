@@ -34,8 +34,9 @@ const UserListScreen = () => {
               <th>ID</th>
               <th>NAME</th>
               <th>EMAIL</th>
-              <th>ADMIN</th>
-              <th></th>
+              <th>USERNAME</th>
+              <th>VERIFIED</th>
+              <th>ACTION</th>
             </tr>
           </thead>
           <tbody>
@@ -43,29 +44,33 @@ const UserListScreen = () => {
               <tr key={user._id}>
                 <td>{user._id}</td>
                 <td>{user.name}</td>
+                <td>{user.email}</td>
+                <td>{user.username}</td>
                 <td>
-                  <a href={`mailto:${user.email}`}>{user.email}</a>
-                </td>
-                <td>
-                  {user.role == 0 ? (
+                  {user.verified ? (
                     <i className="fas fa-check" style={{ color: "green" }}></i>
                   ) : (
                     <i className="fas fa-times" style={{ color: "red" }}></i>
                   )}
                 </td>
                 <td>
-                  <LinkContainer to={`/admin/user/${user._id}/edit`}>
-                    <Button variant="dark" className="btn-sm">
-                      <i className="fas fa-edit"></i>
+                  {user.disabled ? (
+                    <Button
+                      variant="success"
+                      className="btn-sm"
+                      onClick={() => deleteHandler(user._id)}
+                    >
+                      Enable
                     </Button>
-                  </LinkContainer>
-                  <Button
-                    variant="danger"
-                    className="btn-sm"
-                    onClick={() => deleteHandler(user._id)}
-                  >
-                    <i className="fas fa-trash"></i>
-                  </Button>
+                  ) : (
+                    <Button
+                      variant="danger"
+                      className="btn-sm"
+                      onClick={() => deleteHandler(user._id)}
+                    >
+                      Disable
+                    </Button>
+                  )}
                 </td>
               </tr>
             ))}

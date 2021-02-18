@@ -18,11 +18,9 @@ const ProductScreen = ({ history, match }) => {
 
   const dispatch = useDispatch()
 
-  const productDetails = useSelector((state) => state.productDetails)
-  const { loading, error, product } = productDetails
+  const { loading, error, product } = useSelector((state) => state.productDetails)
 
-  // const userLogin = useSelector((state) => state.userLogin)
-  // const { userInfo } = userLogin
+  const {user} = useSelector((state) => state.userDetails)
 
   const productReviewCreate = useSelector((state) => state.productReviewCreate)
   const {
@@ -40,7 +38,7 @@ const ProductScreen = ({ history, match }) => {
       dispatch(listProductDetails(match.params.id))
       dispatch({ type: PRODUCT_CREATE_REVIEW_RESET })
     }
-  }, [dispatch, match, successProductReview])
+  }, [successProductReview])
 
   const addToCartHandler = () => {
     history.push(`/cart/${match.params.id}?qty=${qty}`)
@@ -170,7 +168,7 @@ const ProductScreen = ({ history, match }) => {
                   {errorProductReview && (
                     <Message variant='danger'>{errorProductReview}</Message>
                   )}
-                  {userInfo ? (
+                  {user ? (
                     <Form onSubmit={submitHandler}>
                       <Form.Group controlId='rating'>
                         <Form.Label>Rating</Form.Label>

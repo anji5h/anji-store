@@ -20,7 +20,7 @@ export default function ToastMessage() {
         zIndex: 100,
         minWidth:'300px'
       }}
-      delay={8000}
+      delay={5000}
       autohide
     >
       <Toast.Header>

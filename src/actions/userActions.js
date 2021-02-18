@@ -14,36 +14,13 @@ import {
   USER_UPDATE_SUCCESS,
   USER_UPDATE_REQUEST,
   USER_LOGOUT,
-  USER_DETAILS_REQUEST,
-  USER_DETAILS_FAIL,
 } from "../constants/userConstants";
 import httpReq from "../utils/httpReq";
 
-const logout = () => ({
+export const logout = () => ({
   type: USER_LOGOUT,
 });
 
-export const userDetails = () => async (dispatch) => {
-  try {
-    dispatch({
-      type: USER_DETAILS_REQUEST,
-    });
-    const { data } = await httpReq.get(`/user/getuserdetail`, true);
-
-    dispatch({
-      type: USER_DETAILS_SUCCESS,
-      payload: data.user,
-    });
-  } catch (error) {
-    if (error.response?.status === 401) {
-      dispatch(logout());
-    }
-    dispatch({
-      type: USER_DETAILS_FAIL,
-      payload: error.response?.data?.message,
-    });
-  }
-};
 export const updateUserProfile = (user) => async (dispatch) => {
   try {
     dispatch({

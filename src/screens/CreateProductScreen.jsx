@@ -1,37 +1,56 @@
 import React from "react";
-import { Button, Col, Form, Row } from "react-bootstrap";
+import { Button, Col, Form} from "react-bootstrap";
 import { useForm } from "react-hook-form";
-import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import { useHistory } from "react-router-dom";
 import FormContainer from "../components/FormContainer";
 import Message from "../components/Message";
+import { USER_LOGOUT } from "../constants/userConstants";
+import httpReq from "../utils/httpReq";
 import { errorLabelStyle } from "./LoginScreen";
 
 export default function CreateProductScreen() {
+  const history = useHistory();
+  const dispatch = useDispatch();
+  const [error, setError] = React.useState("");
   const {
     register,
     errors,
     handleSubmit,
-    watch,
     formState: { isSubmitting },
   } = useForm();
   const imageRef = React.useRef(null);
-  const image = watch("image", "");
-
   const previewImage = (e) => {
-    if (e.target.files?.length) {
-      imageRef.current.src = URL.createObjectURL(e.target.files[0]);
+    if (!imageRef.current) return;
+    const file = e.target.files;
+    if (file?.length && file[0].type.split("/")[0] === "image") {
+      return (imageRef.current.src = URL.createObjectURL(file[0]));
     }
-    return;
+    imageRef.current.src = "";
   };
-  const { error, success } = useSelector((state) => state.productCreate);
-  const submitHandler = (data) => {};
+  
+  const submitHandler = async (data) => {
+    try {
+      const formData = new FormData();
+      formData.append("image", data.image[0], data.image[0].name);
+      for (let key in data) {
+        formData.append(key, data[key]);
+      }
+      await httpReq.post(`/product`, formData, true);
+      history.push("/admin/productlist");
+    } catch (error) {
+      if (error.response?.status === 401) {
+        dispatch({ type: USER_LOGOUT });
+      }
+      setError(error.response?.data?.message || error.message);
+    }
+  };
 
   return (
     <FormContainer>
       <h1>Create Product</h1>
-      {error && <Message variant="danger"></Message>}
-
-      <Form onSubmit={handleSubmit(submitHandler)}>
+      {error && <Message variant="danger">{error}</Message>}
+      <Form onSubmit={handleSubmit(submitHandler)} encType="multipart/formdata">
         <Form.Group controlId="name">
           <Form.Label>Name</Form.Label>
           <Form.Control
@@ -76,31 +95,52 @@ export default function CreateProductScreen() {
           </Form.Group>
         </Form.Row>
 
-        <Form.Group controlId="category">
-          <Form.Label>Category</Form.Label>
-          <Form.Control
-            as="select"
-            defaultValue=""
-            name="category"
-            placeholder="Select product category"
-            ref={register({ required: "* required" })}
-            isInvalid={errors.category}
-          >
-            <option value="" disabled>
-              Select product category
-            </option>
-            <option value="ED">Electronic devices</option>
-            <option value="HB">Health &amp; Beauty</option>
-            <option value="SC">Smartphones &amp; Computers</option>
-            <option value="BT">Babies and Toys</option>
-            <option value="GP">Groceries &amp; Pets</option>
-            <option value="FL">Fashion &amp; Lifestyle</option>
-            <option value="SO">Sports &amp; Outdoor</option>
-          </Form.Control>
-          <Form.Control.Feedback type="invalid" style={errorLabelStyle}>
-            {errors.category?.message}
-          </Form.Control.Feedback>
-        </Form.Group>
+        <Form.Row>
+          <Form.Group as={Col} controlId="stock">
+            <Form.Label>Stock Count</Form.Label>
+            <Form.Control
+              name="stock"
+              placeholder="Enter product stock count"
+              ref={register({
+                required: "* required",
+                pattern: { value: /^[0-9]+$/, message: "stock count must be number" },
+              })}
+              isInvalid={errors.stock}
+            ></Form.Control>
+            <Form.Control.Feedback type="invalid" style={errorLabelStyle}>
+              {errors.stock?.message}
+            </Form.Control.Feedback>
+          </Form.Group>
+
+          <Form.Group as={Col}>
+            <Form.Label>Category</Form.Label>
+            <Form.Control
+              as="select"
+              defaultValue=""
+              name="category"
+              id="inlineFormCustomSelectPref"
+              custom
+              placeholder="Select product category"
+              ref={register({ required: "* required" })}
+              isInvalid={errors.category}
+            >
+              <option value="" disabled>
+                Select product category
+              </option>
+              <option value="electronic device">Electronic devices</option>
+              <option value="health and beauty">Health &amp; Beauty</option>
+              <option value="smartphone and computers">Smartphone &amp; Computers</option>
+              <option value="babies and toys">Babies and Toys</option>
+              <option value="groceries and pets">Groceries &amp; Pets</option>
+              <option value="fashion and lifestyle">Fashion &amp; Lifestyle</option>
+              <option value="sports and outdoor">Sports &amp; Outdoor</option>
+              <option value="books and stationery">Books &amp; Stationery</option>
+            </Form.Control>
+            <Form.Control.Feedback type="invalid" style={errorLabelStyle}>
+              {errors.category?.message}
+            </Form.Control.Feedback>
+          </Form.Group>
+        </Form.Row>
 
         <Form.Group controlId="description">
           <Form.Label>Description</Form.Label>
@@ -118,11 +158,15 @@ export default function CreateProductScreen() {
         </Form.Group>
 
         <Form.Group>
-          {!!image && (<img ref={imageRef} className="product-image"></img>)}
+          <img ref={imageRef} src="" className="product-image"></img>
           <Form.File id="formcheck-api-custom" custom>
             <Form.File.Input
               name="image"
-              ref={register({ required: "* required" })}
+              ref={register({
+                required: "* required",
+                validate: (value) =>
+                  value[0].type.split("/")[0] === "image" || "file must be of type image",
+              })}
               onChange={previewImage}
               isInvalid={errors.image}
               accept="image/*"

@@ -30,10 +30,6 @@ const ProductListScreen = () => {
     }
   };
 
-  const createProductHandler = () => {
-    dispatch(createProduct());
-  };
-
   return (
     <>
       <Row className="align-items-center">

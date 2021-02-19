@@ -54,23 +54,14 @@ const UserListScreen = () => {
                   )}
                 </td>
                 <td>
-                  {user.disabled ? (
-                    <Button
-                      variant="success"
-                      className="btn-sm"
-                      onClick={() => deleteHandler(user._id)}
-                    >
-                      Enable
-                    </Button>
-                  ) : (
-                    <Button
-                      variant="danger"
-                      className="btn-sm"
-                      onClick={() => deleteHandler(user._id)}
-                    >
-                      Disable
-                    </Button>
-                  )}
+                  <Button
+                    variant={user.disabled ? "success" : "danger"}
+                    className="btn-sm"
+                    disabled={user.role === 0}
+                    onClick={() => deleteHandler(user._id)}
+                  >
+                    {user.disabled ? "Enable" : "Disable"}
+                  </Button>
                 </td>
               </tr>
             ))}

@@ -24,12 +24,10 @@ import {
 import httpReq from "../utils/httpReq";
 import { logout } from "./userActions";
 
-export const listProducts = (keyword = "", pageNumber = "") => async (dispatch) => {
+export const listProducts = (keyword = "", pageNumber = 1) => async (dispatch) => {
   try {
     dispatch({ type: PRODUCT_LIST_REQUEST });
-
-    const { data } = await httpReq.get(`/api/products?keyword=${keyword}&pageNumber=${pageNumber}`);
-
+    const { data } = await httpReq.get(`/product?keyword=${keyword}&pageNumber=${pageNumber}`);
     dispatch({
       type: PRODUCT_LIST_SUCCESS,
       payload: data,
@@ -74,23 +72,6 @@ export const deleteProduct = (id) => async (dispatch) => {
     dispatch({
       type: PRODUCT_DELETE_FAIL,
       payload: error.response?.data?.message,
-    });
-  }
-};
-
-export const createProduct = (data) => async (dispatch) => {
-  try {
-    await httpReq.post(`/api/products`, data, true);
-    dispatch({
-      type: PRODUCT_CREATE_SUCCESS,
-    });
-  } catch (error) {
-    if (error.response?.status === 401) {
-      dispatch(logout());
-    }
-    dispatch({
-      type: PRODUCT_CREATE_FAIL,
-      payload: error.response?.data?.message || error.message,
     });
   }
 };

@@ -16,7 +16,7 @@ import UserListScreen from "./screens/UserListScreen";
 // import OrderScreen from "./screens/OrderScreen";
 import ProductListScreen from "./screens/ProductListScreen";
 import ProductEditScreen from "./screens/ProductEditScreen";
-import CreateProductScreen from "./screens/CreateProductScreen";
+import CreateProductScreen from "./screens/ProductCreateScreen";
 // import OrderListScreen from "./screens/OrderListScreen";
 
 const PublicRoute = ({ component: Component, user, ...rest }) => (

@@ -1,25 +1,35 @@
 import React from "react";
-import { Button, Col, Form} from "react-bootstrap";
+import { Button, Col, Form } from "react-bootstrap";
 import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
-import { useHistory } from "react-router-dom";
+import { useHistory, Link } from "react-router-dom";
 import FormContainer from "../components/FormContainer";
 import Message from "../components/Message";
-import { USER_LOGOUT } from "../constants/userConstants";
 import httpReq from "../utils/httpReq";
 import { errorLabelStyle } from "./LoginScreen";
 
-export default function CreateProductScreen() {
-  const history = useHistory();
-  const dispatch = useDispatch();
+export default function ProductFormScreen({ product, title, url }) {
   const [error, setError] = React.useState("");
+  const dispatch = useDispatch();
+  const history = useHistory();
   const {
     register,
     errors,
     handleSubmit,
     formState: { isSubmitting },
-  } = useForm();
+  } = useForm({
+    defaultValues: {
+      name: product.name || null,
+      brand: product.brand || null,
+      category: product.category || null,
+      description: product.description || null,
+      price: product.price || 0,
+      stock: product.stock || 0,
+    },
+  });
   const imageRef = React.useRef(null);
+
+  //preview image on select
   const previewImage = (e) => {
     if (!imageRef.current) return;
     const file = e.target.files;
@@ -28,15 +38,15 @@ export default function CreateProductScreen() {
     }
     imageRef.current.src = "";
   };
-  
+
   const submitHandler = async (data) => {
     try {
       const formData = new FormData();
-      formData.append("image", data.image[0], data.image[0].name);
+      if (!product.image) formData.append("image", data.image[0], data.image[0].name);
       for (let key in data) {
         formData.append(key, data[key]);
       }
-      await httpReq.post(`/product`, formData, true);
+      await httpReq.post(url, formData, true);
       history.push("/admin/productlist");
     } catch (error) {
       if (error.response?.status === 401) {
@@ -48,7 +58,7 @@ export default function CreateProductScreen() {
 
   return (
     <FormContainer>
-      <h1>Create Product</h1>
+      <h1>{title}</h1>
       {error && <Message variant="danger">{error}</Message>}
       <Form onSubmit={handleSubmit(submitHandler)} encType="multipart/formdata">
         <Form.Group controlId="name">
@@ -148,7 +158,9 @@ export default function CreateProductScreen() {
             as="textarea"
             rows={5}
             name="description"
-            ref={register({ required: "* required" })}
+            ref={register({
+              required: "* required",
+            })}
             isInvalid={errors.description}
             placeholder="Enter product description"
           ></Form.Control>
@@ -158,14 +170,12 @@ export default function CreateProductScreen() {
         </Form.Group>
 
         <Form.Group>
-          <img ref={imageRef} src="" className="product-image"></img>
+          <img ref={imageRef} src={product?.image?.url || ""} className="product-image"></img>
           <Form.File id="formcheck-api-custom" custom>
             <Form.File.Input
               name="image"
               ref={register({
-                required: "* required",
-                validate: (value) =>
-                  value[0].type.split("/")[0] === "image" || "file must be of type image",
+                required: product?.image ? false : "* required",
               })}
               onChange={previewImage}
               isInvalid={errors.image}
@@ -181,6 +191,11 @@ export default function CreateProductScreen() {
         <Button type="submit" variant="primary" disabled={isSubmitting}>
           Submit
         </Button>
+        <Link to="/admin/productlist" style={{ marginLeft: "10px" }}>
+          <Button type="button" variant="primary">
+            Go Back
+          </Button>
+        </Link>
       </Form>
     </FormContainer>
   );

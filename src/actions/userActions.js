@@ -38,7 +38,7 @@ export const updateUserProfile = (user) => async (dispatch) => {
     }
     dispatch({
       type: USER_UPDATE_PROFILE_FAIL,
-      payload: error.response?.data?.message,
+      payload: error.response?.data?.message || error.message,
     });
   }
 };
@@ -59,7 +59,7 @@ export const listUsers = () => async (dispatch) => {
     }
     dispatch({
       type: USER_LIST_FAIL,
-      payload: error.response?.data?.message,
+      payload: error.response?.data?.message || error.message,
     });
   }
 };
@@ -78,7 +78,7 @@ export const deleteUser = (id) => async (dispatch) => {
     }
     dispatch({
       type: USER_DELETE_FAIL,
-      payload: error.response?.data?.message,
+      payload: error.response?.data?.message || error.message,
     });
   }
 };
@@ -101,7 +101,7 @@ export const updateUser = (user) => async (dispatch) => {
     }
     dispatch({
       type: USER_UPDATE_FAIL,
-      payload: error.response?.data?.message,
+      payload: error.response?.data?.message || error.message,
     });
   }
 };

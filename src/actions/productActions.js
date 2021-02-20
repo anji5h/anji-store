@@ -33,6 +33,9 @@ export const listProducts = (keyword = "", pageNumber = 1) => async (dispatch) =
       payload: data,
     });
   } catch (error) {
+    if (error.response?.status === 401) {
+      dispatch(logout());
+    }
     dispatch({
       type: PRODUCT_LIST_FAIL,
       payload: error.response?.data?.message || error.message,
@@ -43,12 +46,15 @@ export const listProducts = (keyword = "", pageNumber = 1) => async (dispatch) =
 export const listProductDetails = (id) => async (dispatch) => {
   try {
     dispatch({ type: PRODUCT_DETAILS_REQUEST });
-    const { data } = await httpReq.get(`/api/products/${id}`);
+    const { data } = await httpReq.get(`/product/${id}`);
     dispatch({
       type: PRODUCT_DETAILS_SUCCESS,
-      payload: data,
+      payload: data.product,
     });
   } catch (error) {
+    if (error.response?.status === 401) {
+      dispatch(logout());
+    }
     dispatch({
       type: PRODUCT_DETAILS_FAIL,
       payload: error.response?.data?.message || error.message,

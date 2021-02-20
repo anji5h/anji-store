@@ -25,13 +25,13 @@ const HomeScreen = ({ match }) => {
 
   return (
     <>
-      {/* {!keyword ? (
+      {!keyword ? (
         <ProductCarousel />
       ) : (
         <Link to='/' className='btn btn-light'>
           Go Back
         </Link>
-      )} */}
+      )}
       <h1>Latest Products</h1>
       {loading ? (
         <Loader />

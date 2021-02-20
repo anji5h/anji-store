@@ -67,7 +67,7 @@ const ProductScreen = ({ history, match }) => {
         <>
           <Row>
             <Col md={6}>
-              <Image src={product.image} alt={product.name} fluid />
+              <Image src={product.image.url} alt={product.name} fluid />
             </Col>
             <Col md={3}>
               <ListGroup variant='flush'>
@@ -77,7 +77,7 @@ const ProductScreen = ({ history, match }) => {
                 <ListGroup.Item>
                   <Rating
                     value={product.rating}
-                    text={`${product.numReviews} reviews`}
+                    text={`${product.reviews} reviews`}
                   />
                 </ListGroup.Item>
                 <ListGroup.Item>Price: ${product.price}</ListGroup.Item>
@@ -102,12 +102,12 @@ const ProductScreen = ({ history, match }) => {
                     <Row>
                       <Col>Status:</Col>
                       <Col>
-                        {product.countInStock > 0 ? 'In Stock' : 'Out Of Stock'}
+                        {product.stock > 0 ? 'In Stock' : 'Out Of Stock'}
                       </Col>
                     </Row>
                   </ListGroup.Item>
 
-                  {product.countInStock > 0 && (
+                  {product.stock > 0 && (
                     <ListGroup.Item>
                       <Row>
                         <Col>Qty</Col>
@@ -117,7 +117,7 @@ const ProductScreen = ({ history, match }) => {
                             value={qty}
                             onChange={(e) => setQty(e.target.value)}
                           >
-                            {[...Array(product.countInStock).keys()].map(
+                            {[...Array(product.stock).keys()].map(
                               (x) => (
                                 <option key={x + 1} value={x + 1}>
                                   {x + 1}
@@ -135,7 +135,7 @@ const ProductScreen = ({ history, match }) => {
                       onClick={addToCartHandler}
                       className='btn-block'
                       type='button'
-                      disabled={product.countInStock === 0}
+                      disabled={product.stock === 0}
                     >
                       Add To Cart
                     </Button>
@@ -145,7 +145,7 @@ const ProductScreen = ({ history, match }) => {
             </Col>
           </Row>
           <Row>
-            <Col md={6}>
+            {/* <Col md={6}>
               <h2>Reviews</h2>
               {product.reviews.length === 0 && <Message>No Reviews</Message>}
               <ListGroup variant='flush'>
@@ -209,7 +209,7 @@ const ProductScreen = ({ history, match }) => {
                   )}
                 </ListGroup.Item>
               </ListGroup>
-            </Col>
+            </Col> */}
           </Row>
         </>
       )}

@@ -68,7 +68,7 @@ export default function AppRoute() {
             user={user}
           />
           <AdminRoute path="/admin/product/:id/edit" component={ProductEditScreen} user={user} />
-          <AdminRoute path="/product/:id" component={ProductScreen} />
+          <Route path="/product/:id" component={ProductScreen} />
           {/* <Route path="/order/:id" component={OrderScreen} />
           <Route path="/shipping" component={ShippingScreen} />
           <Route path="/payment" component={PaymentScreen} />

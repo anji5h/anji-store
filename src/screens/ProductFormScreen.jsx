@@ -2,14 +2,15 @@ import React from "react";
 import { Button, Col, Form } from "react-bootstrap";
 import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
-import { useHistory, Link } from "react-router-dom";
+import { useHistory, Link, useParams } from "react-router-dom";
 import FormContainer from "../components/FormContainer";
 import Message from "../components/Message";
 import httpReq from "../utils/httpReq";
 import { errorLabelStyle } from "./LoginScreen";
 
-export default function ProductFormScreen({ product, title, url }) {
+export default function ProductFormScreen({ product, title, edit = false }) {
   const [error, setError] = React.useState("");
+  const params = useParams();
   const dispatch = useDispatch();
   const history = useHistory();
   const {
@@ -42,11 +43,14 @@ export default function ProductFormScreen({ product, title, url }) {
   const submitHandler = async (data) => {
     try {
       const formData = new FormData();
-      if (!product.image) formData.append("image", data.image[0], data.image[0].name);
+      if (data.image?.length) formData.append("image", data.image[0], data.image[0].name);
+      delete data.image;
       for (let key in data) {
         formData.append(key, data[key]);
       }
-      await httpReq.post(url, formData, true);
+      edit && params.id
+        ? await httpReq.put(`/product/${params.id}`, formData, true)
+        : await httpReq.post("/product", formData, true);
       history.push("/admin/productlist");
     } catch (error) {
       if (error.response?.status === 401) {
@@ -188,11 +192,11 @@ export default function ProductFormScreen({ product, title, url }) {
           </Form.File>
         </Form.Group>
 
-        <Button type="submit" variant="primary" disabled={isSubmitting}>
+        <Button type="submit" variant="dark" disabled={isSubmitting}>
           Submit
         </Button>
         <Link to="/admin/productlist" style={{ marginLeft: "10px" }}>
-          <Button type="button" variant="primary">
+          <Button type="button" variant="dark">
             Go Back
           </Button>
         </Link>

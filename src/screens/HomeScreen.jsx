@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { Row, Col } from "react-bootstrap";
 import Product from "../components/Product";
@@ -9,10 +9,11 @@ import Paginate from "../components/Paginate";
 import ProductCarousel from "../components/ProductCarousel";
 import { listProducts } from "../actions/productActions";
 
-const HomeScreen = ({ match }) => {
-  const keyword = match.params.keyword;
+const HomeScreen = () => {
+  const params = useParams();
+  const keyword = params.keyword;
 
-  const pageNumber = match.params.pageNumber || 1;
+  const pageNumber = params.pageNumber || 1;
 
   const dispatch = useDispatch();
 
@@ -21,14 +22,14 @@ const HomeScreen = ({ match }) => {
 
   useEffect(() => {
     dispatch(listProducts(keyword, pageNumber));
-  }, [dispatch, keyword, pageNumber]);
+  }, [keyword, pageNumber]);
 
   return (
     <>
       {!keyword ? (
         <ProductCarousel />
       ) : (
-        <Link to='/' className='btn btn-light'>
+        <Link to="/" className="btn btn-light">
           Go Back
         </Link>
       )}

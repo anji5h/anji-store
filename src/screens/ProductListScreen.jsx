@@ -38,7 +38,7 @@ const ProductListScreen = () => {
         </Col>
         <Col className="text-right">
           <LinkContainer to={`/admin/createproduct`}>
-            <Button className="my-3">
+            <Button className="my-3" variant='dark'>
               <i className="fas fa-plus"></i> Create Product
             </Button>
           </LinkContainer>

@@ -21,7 +21,7 @@ export default function ProductEditScreen() {
       ) : error ? (
         <Redirect to="/admin/productlist"></Redirect>
       ) : (
-        <ProductFormScreen title={"Edit product"} url={`/product/${productId}`} product={product} />
+        <ProductFormScreen title={"Edit product"} edit={true} product={product} />
       )}
     </>
   );

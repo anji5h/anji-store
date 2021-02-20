@@ -1,94 +1,51 @@
-import React, { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
-import { useDispatch, useSelector } from 'react-redux'
-import { Row, Col, Image, ListGroup, Card, Button, Form } from 'react-bootstrap'
-import Rating from '../components/Rating'
-import Message from '../components/Message'
-import Loader from '../components/Loader'
-import {
-  listProductDetails,
-  createProductReview,
-} from '../actions/productActions'
-import { PRODUCT_CREATE_REVIEW_RESET } from '../constants/productConstants'
+import React, { useState, useEffect } from "react";
+import { Link, Redirect, useParams } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { Row, Col, Image, ListGroup, Card, Button, InputGroup, FormControl } from "react-bootstrap";
+import Loader from "../components/Loader";
+import { listProductDetails } from "../actions/productActions";
 
-const ProductScreen = ({ history, match }) => {
-  const [qty, setQty] = useState(1)
-  const [rating, setRating] = useState(0)
-  const [comment, setComment] = useState('')
+const ProductScreen = ({ history }) => {
+  const [qty, setQty] = useState(1);
+  const params = useParams();
+  const dispatch = useDispatch();
 
-  const dispatch = useDispatch()
-
-  const { loading, error, product } = useSelector((state) => state.productDetails)
-
-  const {user} = useSelector((state) => state.userDetails)
-
-  const productReviewCreate = useSelector((state) => state.productReviewCreate)
-  const {
-    success: successProductReview,
-    loading: loadingProductReview,
-    error: errorProductReview,
-  } = productReviewCreate
+  const { loading, error, product } = useSelector((state) => state.productDetails);
 
   useEffect(() => {
-    if (successProductReview) {
-      setRating(0)
-      setComment('')
-    }
-    if (!product._id || product._id !== match.params.id) {
-      dispatch(listProductDetails(match.params.id))
-      dispatch({ type: PRODUCT_CREATE_REVIEW_RESET })
-    }
-  }, [successProductReview])
+    dispatch(listProductDetails(params.id));
+  }, []);
 
   const addToCartHandler = () => {
-    history.push(`/cart/${match.params.id}?qty=${qty}`)
-  }
-
-  const submitHandler = (e) => {
-    e.preventDefault()
-    dispatch(
-      createProductReview(match.params.id, {
-        rating,
-        comment,
-      })
-    )
-  }
-
+    history.push(`/cart/${params.id}?qty=${qty}`);
+  };
   return (
     <>
-      <Link className='btn btn-light my-3' to='/'>
+      <Link className="btn btn-light my-3" to="/">
         Go Back
       </Link>
       {loading ? (
         <Loader />
       ) : error ? (
-        <Message variant='danger'>{error}</Message>
+        <Redirect to="/"></Redirect>
       ) : (
         <>
           <Row>
-            <Col md={6}>
-              <Image src={product.image.url} alt={product.name} fluid />
+            <Col md={5}>
+              <Image src={product.image?.url} alt={product.name} fluid />
             </Col>
-            <Col md={3}>
-              <ListGroup variant='flush'>
-                <ListGroup.Item>
-                  <h3>{product.name}</h3>
+            <Col md={4}>
+              <ListGroup variant="flush">
+                <ListGroup.Item as="h3" style={{ textTransform: "capitalize" }}>
+                  {product.name}
                 </ListGroup.Item>
-                <ListGroup.Item>
-                  <Rating
-                    value={product.rating}
-                    text={`${product.reviews} reviews`}
-                  />
-                </ListGroup.Item>
-                <ListGroup.Item>Price: ${product.price}</ListGroup.Item>
-                <ListGroup.Item>
-                  Description: {product.description}
-                </ListGroup.Item>
+                <ListGroup.Item as="h4">Price: ${product.price}</ListGroup.Item>
+                <ListGroup.Item>Description: {product.description}</ListGroup.Item>
               </ListGroup>
             </Col>
             <Col md={3}>
               <Card>
-                <ListGroup variant='flush'>
+                <ListGroup variant="flush">
                   <ListGroup.Item>
                     <Row>
                       <Col>Price:</Col>
@@ -101,40 +58,48 @@ const ProductScreen = ({ history, match }) => {
                   <ListGroup.Item>
                     <Row>
                       <Col>Status:</Col>
-                      <Col>
-                        {product.stock > 0 ? 'In Stock' : 'Out Of Stock'}
-                      </Col>
+                      <Col>{product.stock > 0 ? "In Stock" : "Out Of Stock"}</Col>
                     </Row>
                   </ListGroup.Item>
 
                   {product.stock > 0 && (
-                    <ListGroup.Item>
-                      <Row>
-                        <Col>Qty</Col>
-                        <Col>
-                          <Form.Control
-                            as='select'
+                    <>
+                      <ListGroup.Item style={{ textAlign: "center" }}>Quantity:</ListGroup.Item>
+                      <ListGroup.Item>
+                        <InputGroup>
+                          <InputGroup.Prepend>
+                            <Button
+                              variant="outline-secondary"
+                              onClick={() => setQty((Prev) => Prev + 1)}
+                              disabled={qty >= product.stock}
+                            >
+                              <i className="fas fa-plus"></i>
+                            </Button>
+                          </InputGroup.Prepend>
+                          <FormControl
+                            aria-describedby="basic-addon1"
                             value={qty}
-                            onChange={(e) => setQty(e.target.value)}
-                          >
-                            {[...Array(product.stock).keys()].map(
-                              (x) => (
-                                <option key={x + 1} value={x + 1}>
-                                  {x + 1}
-                                </option>
-                              )
-                            )}
-                          </Form.Control>
-                        </Col>
-                      </Row>
-                    </ListGroup.Item>
+                            style={{ textAlign: "center" }}
+                          />
+                          <InputGroup.Append>
+                            <Button
+                              variant="outline-secondary"
+                              onClick={() => setQty((Prev) => Prev - 1)}
+                              disabled={qty <= 1}
+                            >
+                              <i className="fas fa-minus"></i>
+                            </Button>
+                          </InputGroup.Append>
+                        </InputGroup>
+                      </ListGroup.Item>
+                    </>
                   )}
 
                   <ListGroup.Item>
                     <Button
                       onClick={addToCartHandler}
-                      className='btn-block'
-                      type='button'
+                      className="btn-block"
+                      type="button"
                       disabled={product.stock === 0}
                     >
                       Add To Cart
@@ -214,7 +179,7 @@ const ProductScreen = ({ history, match }) => {
         </>
       )}
     </>
-  )
-}
+  );
+};
 
-export default ProductScreen
+export default ProductScreen;

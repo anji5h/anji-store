@@ -21,7 +21,7 @@ const Header = () => {
 
   return (
     <header>
-      <Navbar fixed='top' bg="dark" variant="dark" expand="lg" collapseOnSelect>
+      <Navbar fixed="top" bg="dark" variant="dark" collapseOnSelect style={{ height: "90px" }}>
         <Container>
           <LinkContainer to="/">
             <Navbar.Brand>ANJISH-STORE</Navbar.Brand>

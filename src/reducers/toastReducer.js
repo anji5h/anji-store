@@ -4,7 +4,7 @@ const initialState = {
   show: false,
   message: "",
 };
-export default (state = initialState, action) => {
+export const toastReducer = (state = initialState, action) => {
   switch (action.type) {
     case HIDE_TOAST:
       return initialState;

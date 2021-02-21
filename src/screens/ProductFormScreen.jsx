@@ -192,7 +192,7 @@ export default function ProductFormScreen({ product, title, edit = false }) {
           </Form.File>
         </Form.Group>
 
-        <Button type="submit" variant="dark" disabled={isSubmitting}>
+        <Button type="submit" variant="primary" disabled={isSubmitting}>
           Submit
         </Button>
         <Link to="/admin/productlist" style={{ marginLeft: "10px" }}>

@@ -5,8 +5,7 @@ import {
   productListReducer,
   productDetailsReducer,
   productDeleteReducer,
-  productUpdateReducer,
-  productReviewCreateReducer,
+  productReviewReducer,
   productTopRatedReducer,
 } from "./reducers/productReducers";
 import { cartReducer } from "./reducers/cartReducers";
@@ -25,7 +24,7 @@ import {
   orderListMyReducer,
   orderListReducer,
 } from "./reducers/orderReducers";
-import toastReducer from "./reducers/toastReducer";
+import { toastReducer } from "./reducers/toastReducer";
 import { USER_LOGOUT } from "./constants/userConstants";
 
 const appReducer = combineReducers({
@@ -33,9 +32,8 @@ const appReducer = combineReducers({
   productList: productListReducer,
   productDetails: productDetailsReducer,
   productDelete: productDeleteReducer,
-  productUpdate: productUpdateReducer,
-  productReviewCreate: productReviewCreateReducer,
   productTopRated: productTopRatedReducer,
+  productReviewList: productReviewReducer,
   cart: cartReducer,
   userDetails: userDetailsReducer,
   userUpdateProfile: userUpdateProfileReducer,

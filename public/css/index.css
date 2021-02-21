@@ -34,14 +34,22 @@ h2 {
 .rating span {
   margin: 0.1rem;
 }
-.product-image{
+.product-image {
   display: block;
   margin: auto;
   height: 200px;
+  width: auto;
+  object-fit: contain;
   margin-bottom: 15px;
 }
-img[src=""]{
+img[src=""] {
   display: none;
+}
+.card-image {
+  height: 150px;
+  width: 100%;
+  object-fit: contain;
+  object-position: bottom;
 }
 /* carousel */
 .carousel-item-next,

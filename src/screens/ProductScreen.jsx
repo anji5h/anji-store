@@ -1,30 +1,28 @@
 import React, { useState, useEffect } from "react";
-import { Link, Redirect, useParams } from "react-router-dom";
+import { Redirect, useHistory, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { Row, Col, Image, ListGroup, Card, Button, InputGroup, FormControl } from "react-bootstrap";
 import Loader from "../components/Loader";
 import { listProductDetails } from "../actions/productActions";
 import ProductReviewScreen from "./ProductReviewScreen";
+import { formatPrice } from "../utils/formatNumber";
+import CartQuantity from "../components/CartQuantity";
 
-const ProductScreen = ({ history }) => {
-  const [qty, setQty] = useState(1);
+const ProductScreen = () => {
   const params = useParams();
+  const history = useHistory();
   const dispatch = useDispatch();
-
   const { loading, error, product } = useSelector((state) => state.productDetails);
 
   useEffect(() => {
     dispatch(listProductDetails(params.id));
   }, []);
 
-  const addToCartHandler = () => {
-    history.push(`/cart/${params.id}?qty=${qty}`);
-  };
   return (
     <>
-      <Link className="btn btn-light my-3" to="/">
+      <Button variant="secondary" className="my-3" onClick={history.goBack}>
         Go Back
-      </Link>
+      </Button>
       {loading ? (
         <Loader />
       ) : error ? (
@@ -37,14 +35,16 @@ const ProductScreen = ({ history }) => {
             </Col>
             <Col md={4}>
               <ListGroup variant="flush">
-                <ListGroup.Item as="h3" style={{ textTransform: "capitalize" }}>
+                <ListGroup.Item as="h4" style={{ textTransform: "capitalize" }}>
                   {product.name}
                 </ListGroup.Item>
-                <ListGroup.Item as="h4">
-                  <span style={{ color: "orange", fontWeight: "bold" }}> Rs. {product.price}</span>
+                <ListGroup.Item as="h3">
+                  <span style={{ color: "orange", fontWeight: "bold" }}>
+                    Rs. {formatPrice(product.price)}
+                  </span>
                 </ListGroup.Item>
                 <ListGroup.Item>
-                  Description:{" "}
+                  Description:
                   <span style={{ textTransform: "capitalize" }}>{product.description}</span>
                 </ListGroup.Item>
               </ListGroup>
@@ -56,7 +56,7 @@ const ProductScreen = ({ history }) => {
                     <Row>
                       <Col>Price:</Col>
                       <Col>
-                        <strong>${product.price}</strong>
+                        <strong>Rs. {product.price}</strong>
                       </Col>
                     </Row>
                   </ListGroup.Item>
@@ -68,50 +68,7 @@ const ProductScreen = ({ history }) => {
                     </Row>
                   </ListGroup.Item>
 
-                  {product.stock > 0 && (
-                    <>
-                      <ListGroup.Item style={{ textAlign: "center" }}>Quantity:</ListGroup.Item>
-                      <ListGroup.Item>
-                        <InputGroup>
-                          <InputGroup.Prepend>
-                            <Button
-                              variant="outline-secondary"
-                              onClick={() => setQty((Prev) => Prev + 1)}
-                              disabled={qty >= product.stock}
-                            >
-                              <i className="fas fa-plus"></i>
-                            </Button>
-                          </InputGroup.Prepend>
-                          <FormControl
-                            aria-describedby="basic-addon1"
-                            value={qty}
-                            style={{ textAlign: "center" }}
-                          />
-                          <InputGroup.Append>
-                            <Button
-                              variant="outline-secondary"
-                              onClick={() => setQty((Prev) => Prev - 1)}
-                              disabled={qty <= 1}
-                            >
-                              <i className="fas fa-minus"></i>
-                            </Button>
-                          </InputGroup.Append>
-                        </InputGroup>
-                      </ListGroup.Item>
-                    </>
-                  )}
-
-                  <ListGroup.Item>
-                    <Button
-                      onClick={addToCartHandler}
-                      variant="secondary"
-                      className="btn-block"
-                      type="button"
-                      disabled={product.stock === 0}
-                    >
-                      Add To Cart
-                    </Button>
-                  </ListGroup.Item>
+                  {product.stock > 0 && <CartQuantity stock={product.stock} />}
                 </ListGroup>
               </Card>
             </Col>

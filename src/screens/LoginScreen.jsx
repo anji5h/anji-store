@@ -64,7 +64,6 @@ export default function LoginScreen() {
           type="submit"
           disabled={isSubmitting}
           variant="primary"
-          style={{ fontSize: "13px" }}
         >
           Sign In
         </Button>

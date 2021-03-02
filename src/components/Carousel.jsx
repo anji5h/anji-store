@@ -1,10 +1,10 @@
 import React, { useEffect } from "react";
-import { Link } from "react-router-dom";
-import { Carousel, Image } from "react-bootstrap";
+import { Carousel } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import Loader from "./Loader";
 import Message from "./Message";
 import { listTopProducts } from "../actions/productActions";
+import { LinkContainer } from "react-router-bootstrap";
 
 const ProductCarousel = () => {
   const dispatch = useDispatch();
@@ -22,16 +22,14 @@ const ProductCarousel = () => {
     <Message variant="danger">{error}</Message>
   ) : (
     <Carousel pause="hover" className="bg-dark">
-      {(products).map((product) => (
+      {products.map((product) => (
         <Carousel.Item key={product._id}>
-          <Link to={`/product/${product._id}`}>
-            <Image src={product.image} alt={product.name} fluid />
-            <Carousel.Caption className="carousel-caption">
-              <h2>
-                {product.name} (${product.price})
-              </h2>
-            </Carousel.Caption>
-          </Link>
+          <LinkContainer to={`/product/${product._id}`}>
+            <img src={product.image.url} alt={product.name} className="d-block w-100"></img>
+          </LinkContainer>
+          <Carousel.Caption className="carousel-caption">
+            <h4>{product.name}</h4>
+          </Carousel.Caption>
         </Carousel.Item>
       ))}
     </Carousel>

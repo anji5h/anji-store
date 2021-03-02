@@ -5,7 +5,7 @@ import { Navbar, Nav, Container, NavDropdown } from "react-bootstrap";
 import SearchBox from "./SearchBox";
 import httpReq from "../utils/httpReq";
 import { SHOW_TOAST } from "../constants/toastConstant";
-import { USER_LOGOUT } from "../constants/userConstants";
+import { logout } from "../actions/userActions";
 
 const Header = () => {
   const dispatch = useDispatch();
@@ -13,7 +13,7 @@ const Header = () => {
   const logoutHandler = async () => {
     try {
       await httpReq.get("/auth/logout", true);
-      dispatch({ type: USER_LOGOUT });
+      dispatch(logout());
     } catch (err) {
       dispatch({ type: SHOW_TOAST, payload: "Failed to logout. Try again." });
     }
@@ -21,7 +21,14 @@ const Header = () => {
 
   return (
     <header>
-      <Navbar fixed="top" bg="dark" variant="dark" collapseOnSelect style={{ height: "90px" }}>
+      <Navbar
+        fixed="top"
+        bg="dark"
+        variant="dark"
+        expand="lg"
+        collapseOnSelect
+        style={{ minHeight: "90px" }}
+      >
         <Container>
           <LinkContainer to="/">
             <Navbar.Brand>ANJISH-STORE</Navbar.Brand>
@@ -52,7 +59,7 @@ const Header = () => {
                 </LinkContainer>
               )}
               {user?.role === 0 && (
-                <NavDropdown title="admin portal" id="adminmenu">
+                <NavDropdown title="admin-portal" id="adminmenu">
                   <LinkContainer to="/admin/userlist">
                     <NavDropdown.Item>users</NavDropdown.Item>
                   </LinkContainer>

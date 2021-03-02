@@ -4,7 +4,6 @@ import { composeWithDevTools } from "redux-devtools-extension";
 import {
   productListReducer,
   productDetailsReducer,
-  productDeleteReducer,
   productReviewReducer,
   productTopRatedReducer,
 } from "./reducers/productReducers";
@@ -25,13 +24,11 @@ import {
   orderListReducer,
 } from "./reducers/orderReducers";
 import { toastReducer } from "./reducers/toastReducer";
-import { USER_LOGOUT } from "./constants/userConstants";
 
-const appReducer = combineReducers({
+const Reducer = combineReducers({
   toast: toastReducer,
   productList: productListReducer,
   productDetails: productDetailsReducer,
-  productDelete: productDeleteReducer,
   productTopRated: productTopRatedReducer,
   productReviewList: productReviewReducer,
   cart: cartReducer,
@@ -47,10 +44,6 @@ const appReducer = combineReducers({
   orderListMy: orderListMyReducer,
   orderList: orderListReducer,
 });
-const rootReducer = (state, action) => {
-  if (action.type === USER_LOGOUT) state = undefined;
-  return appReducer(state, action);
-};
-const store = createStore(rootReducer, composeWithDevTools(applyMiddleware(thunk)));
+const store = createStore(Reducer, composeWithDevTools(applyMiddleware(thunk)));
 
 export default store;

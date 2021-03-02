@@ -5,28 +5,42 @@ import { useDispatch, useSelector } from "react-redux";
 import Message from "../components/Message";
 import Loader from "../components/Loader";
 import Paginate from "../components/Paginate";
-import { listProducts, deleteProduct } from "../actions/productActions";
+import { listProducts } from "../actions/productActions";
 import { useParams } from "react-router-dom";
+import { formatPrice } from "../utils/formatNumber";
+import httpReq from "../utils/httpReq";
+import { SHOW_TOAST } from "../constants/toastConstant";
+import { PRODUCT_DELETE_SUCCESS } from "../constants/productConstants";
+import { USER_LOGOUT } from "../constants/userConstants";
 
 const ProductListScreen = () => {
   const params = useParams();
   const pageNumber = params.pageNumber || 1;
-
+  const [deleteLoading, setLoading] = React.useState(false);
   const dispatch = useDispatch();
 
   const { loading, error, products, page, pages } = useSelector((state) => state.productList);
 
-  const { loading: loadingDelete, error: errorDelete, success: successDelete } = useSelector(
-    (state) => state.productDelete
-  );
-
   useEffect(() => {
     dispatch(listProducts("", pageNumber));
-  }, [successDelete, pageNumber]);
+    return () => setLoading(false);
+  }, [pageNumber]);
 
-  const deleteHandler = (id) => {
-    if (window.confirm("Are you sure")) {
-      dispatch(deleteProduct(id));
+  const deleteHandler = async (id, index) => {
+    if (window.confirm("Are you sure want to delete it.")) {
+      try {
+        setLoading(true);
+        await httpReq.remove(`/product/${id}`, true);
+        dispatch({ type: SHOW_TOAST, payload: "product deleted" });
+        dispatch({ type: PRODUCT_DELETE_SUCCESS, payload: index });
+      } catch (err) {
+        if (err.response?.status === 401) {
+          return dispatch({ type: USER_LOGOUT });
+        }
+        dispatch({ type: SHOW_TOAST, payload: err.response?.data?.message });
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
@@ -38,24 +52,22 @@ const ProductListScreen = () => {
         </Col>
         <Col className="text-right">
           <LinkContainer to={`/admin/createproduct`}>
-            <Button className="my-3" variant='dark'>
+            <Button className="my-3" variant="dark">
               <i className="fas fa-plus"></i> Create Product
             </Button>
           </LinkContainer>
         </Col>
       </Row>
-      {loadingDelete && <Loader />}
-      {errorDelete && <Message variant="danger">{errorDelete}</Message>}
       {loading ? (
         <Loader />
       ) : error ? (
         <Message variant="danger">{error}</Message>
       ) : (
         <>
-          <Table striped bordered hover responsive>
+          <Table bordered hover responsive>
             <thead>
               <tr>
-                <th>ID</th>
+                <th>S.N.</th>
                 <th>NAME</th>
                 <th>PRICE</th>
                 <th>CATEGORY</th>
@@ -65,28 +77,34 @@ const ProductListScreen = () => {
               </tr>
             </thead>
             <tbody>
-              {products.map((product) => (
+              {products.map((product, index) => (
                 <tr key={product._id}>
-                  <td>{product._id}</td>
+                  <td>{index + 1}.</td>
                   <td>{product.name}</td>
-                  <td>${product.price}</td>
+                  <td>Rs. {formatPrice(product.price)}</td>
                   <td>{product.category}</td>
                   <td>{product.brand}</td>
                   <td>{product.stock}</td>
                   <td>
                     <LinkContainer to={`/admin/product/${product._id}/edit`}>
                       <Button variant="success" className="btn-sm">
-                        Edit
+                        <i className="fas fa-edit"></i>
                       </Button>
                     </LinkContainer>
                     <Button
                       variant="danger"
                       className="btn-sm"
-                      onClick={() => deleteHandler(product._id)}
-                      style={{ marginLeft: "10px" }}
+                      disabled={deleteLoading}
+                      onClick={() => deleteHandler(product._id, index)}
+                      style={{ margin: " 0 5px" }}
                     >
-                      Delete
+                      <i class="far fa-trash-alt"></i>
                     </Button>
+                    <LinkContainer to={`/product/${product._id}`}>
+                      <Button variant="dark" className="btn-sm">
+                        <i class="far fa-eye"></i>
+                      </Button>
+                    </LinkContainer>
                   </td>
                 </tr>
               ))}

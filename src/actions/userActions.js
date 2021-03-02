@@ -13,13 +13,14 @@ import {
   USER_UPDATE_FAIL,
   USER_UPDATE_SUCCESS,
   USER_UPDATE_REQUEST,
-  USER_LOGOUT,
+  USER_LIST_RESET,
 } from "../constants/userConstants";
 import httpReq from "../utils/httpReq";
 
-export const logout = () => ({
-  type: USER_LOGOUT,
-});
+export const logout = () => async (dispatch) => {
+  dispatch({ type: USER_DETAILS_RESET });
+  dispatch({ type: USER_LIST_RESET });
+};
 
 export const updateUserProfile = (user) => async (dispatch) => {
   try {

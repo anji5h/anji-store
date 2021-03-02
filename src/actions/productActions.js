@@ -27,9 +27,6 @@ export const listProducts = (keyword = "", pageNumber = 1) => async (dispatch) =
       payload: data,
     });
   } catch (error) {
-    if (error.response?.status === 401) {
-      dispatch(logout());
-    }
     dispatch({
       type: PRODUCT_LIST_FAIL,
       payload: error.response?.data?.message || error.message,
@@ -46,32 +43,9 @@ export const listProductDetails = (id) => async (dispatch) => {
       payload: data.product,
     });
   } catch (error) {
-    if (error.response?.status === 401) {
-      dispatch(logout());
-    }
     dispatch({
       type: PRODUCT_DETAILS_FAIL,
       payload: error.response?.data?.message || error.message,
-    });
-  }
-};
-
-export const deleteProduct = (id) => async (dispatch) => {
-  try {
-    dispatch({
-      type: PRODUCT_DELETE_REQUEST,
-    });
-    await httpReq.remove(`/api/products/${id}`, config);
-    dispatch({
-      type: PRODUCT_DELETE_SUCCESS,
-    });
-  } catch (error) {
-    if (error.response?.status === 401) {
-      dispatch(logout());
-    }
-    dispatch({
-      type: PRODUCT_DELETE_FAIL,
-      payload: error.response?.data?.message,
     });
   }
 };
@@ -81,15 +55,12 @@ export const listProductReview = (productId) => async (dispatch) => {
     dispatch({
       type: PRODUCT_REVIEW_REQUEST,
     });
-    let { data } = await httpReq.get(`/product/${productId}/reviews`, true);
+    let { data } = await httpReq.get(`/product/${productId}/reviews`);
     dispatch({
       type: PRODUCT_REVIEW_SUCCESS,
       payload: data.reviews,
     });
   } catch (error) {
-    if (error.response?.status === 401) {
-      dispatch(logout());
-    }
     dispatch({
       type: PRODUCT_REVIEW_FAIL,
       payload: error.response?.data?.message || error.message,
@@ -101,11 +72,11 @@ export const listTopProducts = () => async (dispatch) => {
   try {
     dispatch({ type: PRODUCT_TOP_REQUEST });
 
-    const { data } = await httpReq.get(`/api/products/top`);
+    const { data } = await httpReq.get(`/product/top`,false);
 
     dispatch({
       type: PRODUCT_TOP_SUCCESS,
-      payload: data,
+      payload: data.products,
     });
   } catch (error) {
     dispatch({

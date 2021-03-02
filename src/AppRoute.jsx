@@ -34,7 +34,7 @@ const AdminRoute = ({ component: Component, user, ...rest }) => (
   <Route
     {...rest}
     render={(props) =>
-      user && user.role === 0 ? <Component {...props} /> : <Redirect to="/login" />
+      user && user.role === 0 ? <Component {...props} /> : <Redirect to="/" />
     }
   />
 );
@@ -44,7 +44,7 @@ export default function AppRoute() {
   return (
     <Router>
       <Header />
-      <main style={{ paddingTop: "100px" }}>
+      <main style={{ padding: "100px 0 10px" }}>
         <Container>
           <Route path="/" component={HomeScreen} exact />
           <Route path="/search/:keyword" component={HomeScreen} exact />

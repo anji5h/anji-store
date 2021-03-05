@@ -13,7 +13,7 @@ const ProductScreen = () => {
   const history = useHistory();
   const dispatch = useDispatch();
   const { loading, error, product } = useSelector((state) => state.productDetails);
-
+  const { user } = useSelector((state) => state.userDetails);
   useEffect(() => {
     dispatch(listProductDetails(params.id));
   }, []);
@@ -44,7 +44,7 @@ const ProductScreen = () => {
                   </span>
                 </ListGroup.Item>
                 <ListGroup.Item>
-                  Description:
+                  <h5>Description:</h5>
                   <span style={{ textTransform: "capitalize" }}>{product.description}</span>
                 </ListGroup.Item>
               </ListGroup>
@@ -54,21 +54,23 @@ const ProductScreen = () => {
                 <ListGroup variant="flush">
                   <ListGroup.Item>
                     <Row>
-                      <Col>Price:</Col>
+                      <Col md={4}>Price:</Col>
                       <Col>
-                        <strong>Rs. {product.price}</strong>
+                        <strong>Rs. {formatPrice(product.price)}</strong>
                       </Col>
                     </Row>
                   </ListGroup.Item>
 
                   <ListGroup.Item>
                     <Row>
-                      <Col>Status:</Col>
+                      <Col md={4}>Status:</Col>
                       <Col>{product.stock > 0 ? "In Stock" : "Out Of Stock"}</Col>
                     </Row>
                   </ListGroup.Item>
 
-                  {product.stock > 0 && <CartQuantity stock={product.stock} />}
+                  {product.stock > 0 && user && user.role == 1 && (
+                    <CartQuantity stock={product.stock} />
+                  )}
                 </ListGroup>
               </Card>
             </Col>

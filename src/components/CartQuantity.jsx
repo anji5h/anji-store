@@ -1,17 +1,38 @@
 import React from "react";
 import { ListGroup, InputGroup, Button, FormControl } from "react-bootstrap";
+import { useDispatch } from "react-redux";
 import { useHistory, useParams } from "react-router-dom";
+import { logout } from "../actions/userActions";
+import { SHOW_TOAST } from "../constants/toastConstant";
+import httpReq from "../utils/httpReq";
 
 export default function CartQuantity({ stock }) {
-  const history = useHistory();
   const params = useParams();
+  const history = useHistory();
+  const dispatch = useDispatch();
   const [qty, setQty] = React.useState(1);
-  const addToCartHandler = () => {
-    history.push(`/cart/${params.id}?qty=${qty}`);
+  const [loading, setLoading] = React.useState(false);
+  React.useEffect(() => {
+    return () => setLoading(false);
+  });
+  const addToCartHandler = async () => {
+    try {
+      setLoading(true);
+      await httpReq.post(`/product/cart/${params.id}`, { quantity: qty }, true);
+      dispatch({ type: SHOW_TOAST, payload: "product added to cart" });
+      history.push("/cart");
+    } catch (err) {
+      if (err.response?.status === 401) {
+        return dispatch(logout());
+      }
+      dispatch({ type: SHOW_TOAST, payload: err.response?.data?.message || err.message });
+    } finally {
+      setLoading(false);
+    }
   };
   return (
     <>
-      <ListGroup.Item style={{ textAlign: "center" }}>Quantity:</ListGroup.Item>
+      <ListGroup.Item>Quantity:</ListGroup.Item>
       <ListGroup.Item>
         <InputGroup>
           <InputGroup.Prepend>
@@ -44,7 +65,7 @@ export default function CartQuantity({ stock }) {
           onClick={addToCartHandler}
           className="btn-block"
           type="button"
-          disabled={stock === 0}
+          disabled={stock === 0 || loading}
         >
           Add To Cart
         </Button>

@@ -49,8 +49,8 @@ export default function ProductFormScreen({ product, title, edit = false }) {
         formData.append(key, data[key]);
       }
       edit && params.id
-        ? await httpReq.put(`/product/${params.id}`, formData, true)
-        : await httpReq.post("/product", formData, true);
+        ? await httpReq.put(`/admin/products/${params.id}`, formData, true)
+        : await httpReq.post("/admin/products", formData, true);
       history.push("/admin/productlist");
     } catch (error) {
       if (error.response?.status === 401) {

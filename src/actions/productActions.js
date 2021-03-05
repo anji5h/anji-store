@@ -5,9 +5,6 @@ import {
   PRODUCT_DETAILS_REQUEST,
   PRODUCT_DETAILS_SUCCESS,
   PRODUCT_DETAILS_FAIL,
-  PRODUCT_DELETE_SUCCESS,
-  PRODUCT_DELETE_REQUEST,
-  PRODUCT_DELETE_FAIL,
   PRODUCT_TOP_REQUEST,
   PRODUCT_TOP_SUCCESS,
   PRODUCT_TOP_FAIL,
@@ -16,7 +13,6 @@ import {
   PRODUCT_REVIEW_FAIL,
 } from "../constants/productConstants";
 import httpReq from "../utils/httpReq";
-import { logout } from "./userActions";
 
 export const listProducts = (keyword = "", pageNumber = 1) => async (dispatch) => {
   try {
@@ -55,7 +51,7 @@ export const listProductReview = (productId) => async (dispatch) => {
     dispatch({
       type: PRODUCT_REVIEW_REQUEST,
     });
-    let { data } = await httpReq.get(`/product/${productId}/reviews`);
+    let { data } = await httpReq.get(`/product/reviews/${productId}`);
     dispatch({
       type: PRODUCT_REVIEW_SUCCESS,
       payload: data.reviews,
@@ -72,7 +68,7 @@ export const listTopProducts = () => async (dispatch) => {
   try {
     dispatch({ type: PRODUCT_TOP_REQUEST });
 
-    const { data } = await httpReq.get(`/product/top`,false);
+    const { data } = await httpReq.get(`/product/top`, false);
 
     dispatch({
       type: PRODUCT_TOP_SUCCESS,

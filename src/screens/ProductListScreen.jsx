@@ -30,7 +30,7 @@ const ProductListScreen = () => {
     if (window.confirm("Are you sure want to delete it.")) {
       try {
         setLoading(true);
-        await httpReq.remove(`/admin/products/${id}`, true);
+        await httpReq.remove(`/product/${id}`, true);
         dispatch({ type: SHOW_TOAST, payload: "product deleted" });
         dispatch({ type: PRODUCT_DELETE_SUCCESS, payload: index });
       } catch (err) {
@@ -67,7 +67,7 @@ const ProductListScreen = () => {
           <Table bordered hover responsive>
             <thead>
               <tr>
-                <th>ID</th>
+                <th>S.N.</th>
                 <th>NAME</th>
                 <th>PRICE</th>
                 <th>CATEGORY</th>
@@ -79,7 +79,7 @@ const ProductListScreen = () => {
             <tbody>
               {products.map((product, index) => (
                 <tr key={product._id}>
-                  <td style={{ fontSize: "14px" }}>{product._id}</td>
+                  <td>{index + 1}.</td>
                   <td>{product.name}</td>
                   <td>Rs. {formatPrice(product.price)}</td>
                   <td>{product.category}</td>

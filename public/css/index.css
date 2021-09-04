@@ -59,11 +59,6 @@ img[src=""] {
   white-space: nowrap;
   overflow: hidden;
 }
-.review-date {
-  font-style: italic;
-  color: gray;
-  font-size: 14px;
-}
 /* carousel */
 .carousel-item-next,
 .carousel-item-prev,

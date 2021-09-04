@@ -47,6 +47,7 @@ export default function CartQuantity({ stock }) {
           <FormControl
             aria-describedby="basic-addon1"
             value={qty}
+            readOnly
             style={{ textAlign: "center" }}
           />
           <InputGroup.Append>

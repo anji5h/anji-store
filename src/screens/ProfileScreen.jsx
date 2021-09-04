@@ -1,90 +1,116 @@
-import React, { useState, useEffect } from "react";
-import { Table, Form, Button, Row, Col } from "react-bootstrap";
+import React from "react";
+import { Form, Button, ListGroup, Row, Col } from "react-bootstrap";
 import { LinkContainer } from "react-router-bootstrap";
+import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
-import Message from "../components/Message";
-import Loader from "../components/Loader";
-import { updateUserProfile } from "../actions/userActions";
-import { USER_UPDATE_PROFILE_RESET } from "../constants/userConstants";
+import httpReq from "../utils/httpReq";
+import { SHOW_TOAST } from "../constants/toastConstant";
+import { USER_LOGOUT } from "../constants/userConstants";
 
 const ProfileScreen = () => {
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [message, setMessage] = useState(null);
-
   const dispatch = useDispatch();
+  const { user } = useSelector((state) => state.userDetails);
+  const {
+    register,
+    errors,
+    handleSubmit,
+    watch,
+    formState: { isSubmitting },
+  } = useForm();
 
-  const userDetails = useSelector((state) => state.userDetails);
-  const { loading, error, user } = userDetails;
-
-  const userUpdateProfile = useSelector((state) => state.userUpdateProfile);
-  const { success } = userUpdateProfile;
-
-  const submitHandler = (e) => {
-    e.preventDefault();
-    if (password !== confirmPassword) {
-      setMessage("Passwords do not match");
-    } else {
-      dispatch(updateUserProfile({ id: user._id, password }));
+  const submitHandler = async (data) => {
+    try {
+      await httpReq.put("/user/update/password", data, true);
+      dispatch({ type: SHOW_TOAST, payload: "password updated" });
+    } catch (err) {
+      if (err.response?.status === 401) {
+        dispatch({ type: USER_LOGOUT });
+      }
+      dispatch({ type: SHOW_TOAST, payload: err.response?.data?.message || err.message });
     }
   };
 
   return (
     <>
-      <h2>User Profile</h2>
-      {message && <Message variant="danger">{message}</Message>}
-      {success && <Message variant="success">Profile Updated</Message>}
-      {loading ? (
-        <Loader />
-      ) : error ? (
-        <Message variant="danger">{error}</Message>
-      ) : (
-        <Form onSubmit={submitHandler}>
-          <Form.Group controlId="name">
-            <Form.Label>Name</Form.Label>
-            <Form.Control
-              type="name"
-              placeholder="Enter name"
-              value={user.name}
-              onChange={(e) => setName(e.target.value)}
-            ></Form.Control>
-          </Form.Group>
+      <h2>User Details</h2>
+      <ListGroup variant="flush">
+        <ListGroup.Item>
+          <Row>
+            <Col md={5}>Full Name : </Col>
+            <Col>{user.name}</Col>
+          </Row>
+        </ListGroup.Item>
+        <ListGroup.Item>
+          <Row>
+            <Col md={5}>Username : </Col>
+            <Col>{user.username}</Col>
+          </Row>
+        </ListGroup.Item>
+        <ListGroup.Item>
+          <Row>
+            <Col md={5}>Email Address : </Col>
+            <Col>{user.email}</Col>
+          </Row>
+        </ListGroup.Item>
+      </ListGroup>
 
-          <Form.Group controlId="username">
-            <Form.Label>Username</Form.Label>
-            <Form.Control value={user.username} disabled readOnly></Form.Control>
-          </Form.Group>
-
-          <Form.Group controlId="email">
-            <Form.Label>Email Address</Form.Label>
-            <Form.Control type="email" value={user.email} disabled readOnly></Form.Control>
-          </Form.Group>
-
-          <Form.Group controlId="password">
-            <Form.Label>Password</Form.Label>
-            <Form.Control
-              type="password"
-              placeholder="Enter password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            ></Form.Control>
-          </Form.Group>
-
-          <Form.Group controlId="confirmPassword">
-            <Form.Label>Confirm Password</Form.Label>
-            <Form.Control
-              type="password"
-              placeholder="Confirm password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-            ></Form.Control>
-          </Form.Group>
-
-          <Button type="submit" variant="primary">
-            Update
+      <h2>Change Password</h2>
+      <Form onSubmit={handleSubmit(submitHandler)}>
+        <Form.Group controlId="oldPassword">
+          <Form.Label>Old Password</Form.Label>
+          <Form.Control
+            type="password"
+            name="old_password"
+            placeholder="Old password"
+            ref={register({
+              required: "* required",
+            })}
+            isInvalid={errors.old_password}
+          ></Form.Control>
+          <Form.Control.Feedback type="invalid">
+            {errors.old_password?.message}
+          </Form.Control.Feedback>
+        </Form.Group>
+        <Form.Group controlId="password">
+          <Form.Label>New Password</Form.Label>
+          <Form.Control
+            type="password"
+            name="new_password"
+            placeholder="New password"
+            ref={register({
+              required: "* required",
+              minLength: { value: 8, message: "password must have 8 characters or more." },
+            })}
+            isInvalid={errors.new_password}
+          ></Form.Control>
+          <Form.Control.Feedback type="invalid">
+            {errors.new_password?.message}
+          </Form.Control.Feedback>
+        </Form.Group>
+        <Form.Group controlId="confirmPassword">
+          <Form.Label>Confirm New Password</Form.Label>
+          <Form.Control
+            type="password"
+            name="confrim_password"
+            placeholder="Confirm new password"
+            ref={register({
+              validate: (value) => watch("new_password") === value || "password don't match",
+            })}
+            isInvalid={errors.confrim_password}
+          ></Form.Control>
+          <Form.Control.Feedback type="invalid">
+            {errors.confrim_password?.message}
+          </Form.Control.Feedback>
+        </Form.Group>
+        <Button type="submit" variant="primary" disabled={isSubmitting}>
+          Submit
+        </Button>
+        <LinkContainer to="/" style={{ marginLeft: "10px" }}>
+          <Button type="button" variant="dark">
+            Go Back
           </Button>
-        </Form>
-      )}
+        </LinkContainer>
+      </Form>
     </>
   );
 };

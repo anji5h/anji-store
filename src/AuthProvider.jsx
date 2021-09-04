@@ -10,7 +10,7 @@ export default function AuthProvider({ children }) {
   const [loading, setLoading] = React.useState(true);
   const getAuthStatus = async () => {
     try {
-      const { data } = await httpReq.get(`/user/getuserdetail`, true);
+      const { data } = await httpReq.get(`/user/detail`, true);
       dispatch({
         type: USER_DETAILS_SUCCESS,
         payload: data.user,

@@ -1,5 +1,5 @@
 import React from "react";
-import { useDispatch,useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Toast } from "react-bootstrap";
 import { HIDE_TOAST } from "../constants/toastConstant";
 
@@ -14,11 +14,14 @@ export default function ToastMessage() {
       show={show}
       onClose={handleClose}
       style={{
-        position: "absolute",
+        position: "fixed",
+        left: 0,
+        right: 0,
         top: 100,
-        right: 10,
         zIndex: 100,
-        minWidth:'300px'
+        marginLeft: "auto",
+        marginRight: "auto",
+        minWidth: "300px",
       }}
       delay={5000}
       autohide
@@ -26,7 +29,7 @@ export default function ToastMessage() {
       <Toast.Header>
         <strong className="mr-auto">Notification</strong>
       </Toast.Header>
-      <Toast.Body>{message}</Toast.Body>
+      <Toast.Body style={{ textTransform: "capitalize" }}>{message}</Toast.Body>
     </Toast>
   );
 }

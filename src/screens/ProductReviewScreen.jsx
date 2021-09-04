@@ -18,7 +18,8 @@ export default function ProductReviewScreen() {
     register,
     handleSubmit,
     errors,
-    formState: { isSubmitting },
+    formState: { isSubmitting,},
+    reset,
   } = useForm();
   const params = useParams();
   const { user } = useSelector((state) => state.userDetails);
@@ -33,10 +34,13 @@ export default function ProductReviewScreen() {
       await httpReq.post(`/product/reviews/${params.id}`, data, true);
       dispatch({ type: SHOW_TOAST, payload: "review added" });
     } catch (err) {
+      console.log(err);
       if (err.response?.status === 401) {
         return dispatch({ type: USER_LOGOUT });
       }
-      dispatch({ type: SHOW_TOAST, payload: err.response?.data?.message });
+      dispatch({ type: SHOW_TOAST, payload: err.response?.data?.message || err.message });
+    } finally {
+      reset();
     }
   };
   return (
